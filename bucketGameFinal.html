@@ -109,7 +109,7 @@ void setup(){
   fill(0);
   
   preGame = true;
-  speed = 2;
+  speed = 1;
 }
 
 void draw(){
@@ -141,7 +141,7 @@ void draw(){
 	text("Missed: " + missed,870,140);
   }
   time++;
-  if (time == 500) {
+  if (time == 1000) {
     speed++;
 	time = 0;
   }
@@ -163,7 +163,7 @@ void mouseClicked() {
 }
 
 void modifyList() {
-  if (count % 73 == 0) {
+  if (count % 120 == 0) {
     drops.add(new Drop())
   }
   if(missed == 5)
