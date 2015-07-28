@@ -1,0 +1,219 @@
+<html>
+<head>
+<title>Save Every Drop</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <style>
+    body {
+		background-image: url("background.png");
+    } 
+	@font-face {
+		font-family: WaterPark;
+		src: url(WaterPark.ttf);
+	}
+	div {
+	    color: black;
+		font-family: WaterPark;
+		font-size: 60px;
+		border-image-source: url(http://36.media.tumblr.com/b04172b640977d110e1404913d605635/tumblr_nmhmwihaMe1ru3nbdo8_r2_250.png);
+	}
+	.alignleft {
+		float: left;
+		text-indent: 1.6em;
+	}
+	.alignright {
+		position: absolute;
+        right:100px;
+	}
+				@font-face {
+		font-family: AlittleSunshine;
+		src: url(Alittlesunshine.ttf);
+		}
+	
+	 a
+{
+    color: #ffffff;
+}
+.btn {
+  background: #5cbeff;
+  background-image: -webkit-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -moz-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -ms-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -o-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: linear-gradient(to bottom, #5cbeff, #2980b9);
+  -webkit-border-radius: 60;
+  -moz-border-radius: 60;
+  border-radius: 60px;
+  font-family: Georgia;
+  color: #ffffff;
+  font-size: 20px;
+  font-family: AlittleSunshine;
+  padding: 5px 20px 5px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #6599ba;
+  background-image: -webkit-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -moz-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -ms-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -o-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: linear-gradient(to bottom, #6599ba, #6fb9eb);
+  text-decoration: none;
+}
+  </style>
+    <div class="btn">
+<a href="HomepageWaterYouDoing.html">Home</a>
+</div>
+  <div>
+	<center>
+		<h1 style="color: blue; font-size: 95px"> 
+			Save Every Drop
+		</h1>
+	</center>
+	</div>
+  </head>
+  <body>
+  <script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+PImage drop;
+PImage bucket;
+PImage backdrop;
+ArrayList drops;
+Bucket b;
+int count;
+int score= 0;
+int missed = 0;
+int saved = 0;
+boolean preGame;
+boolean postGame2;
+int speed;
+int time;
+
+void setup(){
+  console.log("hi");
+  size(1000, 750);
+  
+  drop = loadImage("https://lh3.ggpht.com/kuskOgZvjr5tefLkXUqGxt3wxFy1IUIqHEowuZfi8a6Qd9XeASiXulDDMhcq1yKGGII=w300", "jpg");
+  bucket = loadImage("http://static1.squarespace.com/static/52c4e8d4e4b0cf91c44b3511/t/54f8ae02e4b0ffd48a8308cf/1425583621258/S", "jpg");
+  backdrop = loadImage("https://ulife.vpul.upenn.edu/careerservices/blog/wp-content/uploads/2011/01/dripping-water.jpg", "jpg");
+  
+  drops = new ArrayList();
+  b = new Bucket();
+  
+  myFont = createFont("AlittleSunshine", 36);
+  textFont(myFont);
+  fill(0);
+  
+  preGame = true;
+  speed = 2;
+}
+
+void draw(){
+  noStroke();
+  
+  if (preGame) {
+    background(245,245,220);
+	text("Click here to begin. Press the 'f' key to go left and the 'j' key to go right.",120, 375);
+	text("Try to save every drop. The game ends when you miss 5 drops.", 145, 410);
+  }
+  else if( postGame2)
+  {
+      background(245,245,220);
+	  saved = score * 0.05;
+	  text("You saved " + score + " drops, which is " + saved + " milliliters.", 300, 375);
+	  text("Every drop counts! :)", 400, 410);
+  }
+  else {
+	image(backdrop, 0, 0, 1000, 750);
+	count++;
+	 
+	modifyList();
+	for (int i = 0; i < drops.size(); i++) {
+	 drops.get(i).y += speed;
+	 image(drop, drops.get(i).x, drops.get(i).y, drops.get(i).size, drops.get(i).size);
+	}
+	image(bucket, b.x, b.y, b.size, b.size);
+	text("Score: " + score,875,100);
+	text("Missed: " + missed,870,140);
+  }
+  time++;
+  if (time == 500) {
+    speed++;
+	time = 0;
+  }
+}
+
+void keyTyped() {
+  if(key=='f' && b.x > 0) { 
+	b.x -= 15;
+  }
+  if(key==='j' && b.x < 1000 - b.size) { 
+	b.x += 15;
+  }
+}
+
+void mouseClicked() {
+	if (preGame) {
+		preGame = false;
+	}
+}
+
+void modifyList() {
+  if (count % 73 == 0) {
+    drops.add(new Drop())
+  }
+  if(missed == 5)
+  {
+     postGame2 = true;
+  }
+  for (Drop d: drops) {
+	if (d.x + d.size < b.x + b.size && d.x > b.x && d.y > b.y && d.y < 750 - b.size + 20) {
+		drops.remove(d);
+		score++;
+	}
+	else if (d.y - d.size > 750) {
+		drops.remove(d);
+		missed++;
+	}
+  }
+}
+
+class Drop {
+  int x;
+  int y;
+  int size;
+  
+  Drop() {
+	x = (int)(random(5,900));
+	y = -50;
+	size = 50;
+  }
+}
+
+class Bucket {
+  int x;
+  int y;
+  int size;
+  
+  Bucket() {
+	x = 100;
+	y = 550;
+	size = 200;
+  }
+}
+</script>
+<center>
+<canvas id="mycanvas"></canvas>
+</center>
+<center>
+   <div class="btn">
+<a href="bucketGameFinal.html">Play Again?</a>
+</div>
+</center>
+  </body>
+  </html>
+  

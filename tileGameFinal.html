@@ -1,0 +1,272 @@
+<html>
+<head>
+<title>Tile Game</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <style>
+    body {
+		background-image: url("background.png");
+    } 
+	@font-face {
+		font-family: WaterPark;
+		src: url(WaterPark.ttf);
+	}
+	div {
+	    color: black;
+		font-family: WaterPark;
+		font-size: 60px;
+		border-image-source: url(http://36.media.tumblr.com/b04172b640977d110e1404913d605635/tumblr_nmhmwihaMe1ru3nbdo8_r2_250.png);
+	}
+	.alignleft {
+		float: left;
+		text-indent: 1.6em;
+	}
+	.alignright {
+		position: absolute;
+        right:100px;
+	}
+			@font-face {
+		font-family: AlittleSunshine;
+		src: url(Alittlesunshine.ttf);
+		}
+	
+	 a
+{
+    color: #ffffff;
+}
+.btn {
+  background: #5cbeff;
+  background-image: -webkit-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -moz-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -ms-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -o-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: linear-gradient(to bottom, #5cbeff, #2980b9);
+  -webkit-border-radius: 60;
+  -moz-border-radius: 60;
+  border-radius: 60px;
+  font-family: Georgia;
+  color: #ffffff;
+  font-size: 20px;
+  font-family: AlittleSunshine;
+  padding: 5px 20px 5px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #6599ba;
+  background-image: -webkit-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -moz-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -ms-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -o-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: linear-gradient(to bottom, #6599ba, #6fb9eb);
+  text-decoration: none;
+}
+  </style>
+     <div class="btn">
+<a href="HomepageWaterYouDoing.html">Home</a>
+</div>
+  <div>
+	<center>
+		<h1 style="color: blue; font-size: 95px"> 
+			Tile Game
+		</h1>
+	</center>
+	</div>
+  </head>
+  <body>
+  <script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+PImage [] imgs;
+PImage [] strs;
+int rows;
+int cols;
+int totalTiles;
+int tileSize;
+int tileSpace;
+Tile [] board;
+PImage blank;
+PImage tile;
+boolean picked;
+int tilesFlipped;
+int [] tilesShowing;
+int count;
+boolean checking;
+boolean empty;
+PFont myFont;
+
+void setup(){
+  size(1000, 750);
+  
+  rows = 4;
+  cols = 4;
+  totalTiles = rows * cols;
+  tileSize = 150;
+  tileSpace = 20;
+  
+  myFont = createFont("AlittleSunshine", 36);
+  textFont(myFont);
+  fill(0);
+  
+  blank = loadImage("http://vignette2.wikia.nocookie.net/p__/images/b/b0/Blue-energy.jpg/revision/latest?cb=20140603164657&path-prefix=protagonist", "jpg");
+  tile = loadImage("http://static6.depositphotos.com/1034895/639/i/950/depositphotos_6399664-Blue-Tiles-in-Bathroom.jpg", "jpg");
+  
+  board = new Tile[totalTiles];
+  
+  imgs = new PImage [8];
+  imgs[0] = loadImage("https://letsgetgreen.files.wordpress.com/2007/10/mode_showerhead.jpg","jpg");
+  imgs[1] = loadImage("http://images.sodahead.com/polls/001517735/1138594129_toothbrush_under_faucet_xlarge.jpeg", "jpeg");
+  imgs[2] = loadImage("http://www.3rdrockplumbing.com/wp-content/uploads/2013/09/pipe-leak-300x180.jpg","jpg");
+  imgs[3] = loadImage("http://homegardenair.com/wp-content/uploads/2014/04/watering-garden-after-planting.jpg","jpg");
+  imgs[4] = loadImage("http://sfwater.org/modules/showimage.aspx?imageid=178","jpg");
+  imgs[5] = loadImage("http://www.animalconcepts.eu/styled-16/blog/files/baboon-with-broomstick-the-aspinall-foundation.jpg", "jpg");
+  imgs[6] = loadImage("http://tlcminnesota.com/wp-content/uploads/Premium-Color-Gold-Mulch.jpg", "jpg");
+  imgs[7] = loadImage("http://media.mlive.com/grpress/news_impact/photo/img-0338jpg-463956509a1f7928.jpg", "jpg");
+  
+  strs = new PImage [8];
+  strs[0] = loadImage("blue0.jpg","jpg");
+  strs[1] = loadImage("blue1.jpg","jpg");
+  strs[2] = loadImage("blue2.jpg","jpg");
+  strs[3] = loadImage("blue3.jpg","jpg");
+  strs[4] = loadImage("blue4.jpg","jpg");
+  strs[5] = loadImage("blue5.jpg","jpg");
+  strs[6] = loadImage("blue6.jpg","jpg");
+  strs[7] = loadImage("blue7.jpg","jpg");
+  
+  for (int i = 0; i < totalTiles; i += 2) {
+	picked = false;
+	while(!picked) {
+		index = (int)(random(0, 8));
+		if (strs[index] != null) {
+			board[i] = new Tile(imgs[index], index);
+			board[i + 1] = new Tile(strs[index], index);
+			strs[index] = null;
+			picked = true;
+		}
+    }
+  }
+  for (int i = 0; i < totalTiles; i++) {
+	ran = (int)(random(0, totalTiles));
+	Tile temp = board[i];
+	board[i] = board[ran];
+	board[ran] = temp;
+  }
+  for (int i = 0; i < totalTiles; i++) {
+	board[i].place(i);
+  }
+  
+  tilesShowing = new int [2];
+  for (int i = 0; i < tilesShowing.length; i++) {
+	tilesShowing[i] = -1;
+  }
+  
+  checking = false;
+}
+
+void draw(){
+  noStroke();
+  background(245,245,220);
+  text("Tiles Flipped: " + tilesFlipped, 765, 100);
+  for (int i = 0; i < totalTiles; i++) {
+	if (board[i].inPlay) {
+		if (board[i].showing) {
+			image(board[i].img,board[i].x,board[i].y,tileSize,tileSize);
+		}
+		else {
+			image(tile,board[i].x,board[i].y,tileSize,tileSize);
+		}
+	}
+  }
+  check();
+  if (checking == true) {
+    count++;
+  }
+  if (win()) {
+    background(245,245,220);
+	text("You completed this puzzle with " + tilesFlipped + " tiles flipped!", 220, 375);
+  }
+}
+
+void mouseClicked() {
+  for (int i = 0; i < totalTiles; i++) {
+	if (mouseX > board[i].x && mouseX < (board[i].x + tileSize) &&
+	    mouseY > board[i].y && mouseY < (board[i].y + tileSize) &&
+		board[i].showing == false && checking == false) {
+		board[i].showing = true;
+		if (tilesShowing[0] == -1) {
+		  tilesShowing[0] = i;
+		}
+		else {
+		  tilesShowing[1] = i;
+		}
+		tilesFlipped++;
+	}
+  }
+}
+
+void check() {
+  if (tilesShowing[1] != -1) {
+	checking = true;
+	if (count == 50) {
+		if (board[tilesShowing[0]].index == board[tilesShowing[1]].index) {
+		  board[tilesShowing[0]].inPlay = false;
+		  board[tilesShowing[1]].inPlay = false;
+		  tilesShowing[0] = -1;
+		  tilesShowing[1] = -1;
+		}
+		else {
+		  board[tilesShowing[0]].showing = false;
+		  board[tilesShowing[1]].showing = false;
+		  tilesShowing[0] = -1;
+		  tilesShowing[1] = -1;
+		}
+		count = 0;
+		checking = false;
+	}
+  }
+}
+
+boolean win() {
+  empty = true;
+  for (int i = 0; i < totalTiles; i++) {
+	if (board[i].inPlay == true) {
+		empty = false;
+	}
+  }
+  return empty;
+}
+
+class Tile {
+  PImage img;
+  int index;
+  boolean showing;
+  boolean inPlay;
+  int x;
+  int y;
+  
+  Tile(PImage imgPassed, int indexPassed) {
+    img = imgPassed;
+    index = indexPassed;
+    showing = false;
+	inPlay = true;
+  }
+  
+  void place(int ind) {
+	x = 50 + (ind % cols) * tileSize + (ind % cols) * tileSpace;
+	y = 50 + (int)(ind / rows) * tileSize + (int)(ind / rows) * tileSpace;
+  }
+}
+</script>
+<center>
+<canvas id="mycanvas"></canvas>
+  </center>
+  <center>
+     <div class="btn">
+<a href="tileGameFinal.html">Play Again?</a>
+</div>
+</center>
+  </body>
+  </html>
+  

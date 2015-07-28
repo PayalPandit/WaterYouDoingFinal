@@ -1,0 +1,258 @@
+<html>
+<head>
+<title>Trivia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <style>
+    body {
+        background-image: url("background.png");
+    } 
+    @font-face {
+        font-family: WaterPark;
+        src: url(WaterPark.ttf);
+    }
+    div {
+        color: black;
+        font-family: WaterPark;
+        font-size: 60px;
+        border-image-source: url(http://36.media.tumblr.com/b04172b640977d110e1404913d605635/tumblr_nmhmwihaMe1ru3nbdo8_r2_250.png);
+    }
+    .alignleft {
+        float: left;
+        text-indent: 1.6em;
+    }
+    .alignright {
+        position: absolute;
+        right:100px;
+    }
+            @font-face {
+        font-family: AlittleSunshine;
+        src: url(Alittlesunshine.ttf);
+        }
+    
+     a
+{
+    color: #ffffff;
+}
+.btn {
+  background: #5cbeff;
+  background-image: -webkit-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -moz-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -ms-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: -o-linear-gradient(top, #5cbeff, #2980b9);
+  background-image: linear-gradient(to bottom, #5cbeff, #2980b9);
+  -webkit-border-radius: 60;
+  -moz-border-radius: 60;
+  border-radius: 60px;
+  font-family: Georgia;
+  color: #ffffff;
+  font-size: 20px;
+  font-family: AlittleSunshine;
+  padding: 5px 20px 5px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #6599ba;
+  background-image: -webkit-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -moz-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -ms-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: -o-linear-gradient(top, #6599ba, #6fb9eb);
+  background-image: linear-gradient(to bottom, #6599ba, #6fb9eb);
+  text-decoration: none;
+}
+  </style>
+      <div class="btn">
+<a href="HomepageWaterYouDoing.html">Home</a>
+</div>
+  <div>
+    <center>
+        <h1 style="color: blue; font-size: 95px">
+            Trivia
+        </h1>
+    </center>
+    </div>
+  </head>
+  <body>
+	<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+
+ArrayList questions;
+Question current;
+int currentIndex;
+PImage water;
+int clicked;
+int fontSize;
+int score;
+ArrayList boxes;
+int redIndex;
+int greenIndex;
+boolean pending;
+int count;
+boolean inPlay;
+
+void setup(){
+  size(1000, 750);
+  
+  questions = new ArrayList();
+  questions.add(new Question("How much water does an average shower consume per use?", "17.2 gallons", "16.8 gallons", "200 gallons", "18 gallons", 1));
+  questions.add(new Question("What uses the most water inside your home?", "Washing machine", "Toilet", "Shower", "Dishwasher", 2));
+  questions.add(new Question("How much water does it take to grow one almond?", "1.3 gallons", "5 gallons", "0.4 gallons", "1.1 gallons", 4));
+  questions.add(new Question("The average person uses how many liters of water per day?", "135 liters", "100 liters", "225 liters", "360 liters", 4));
+  questions.add(new Question("The best way to save water at home is: ", "Turn off tap when brushing", "Fix toilet valve leaks", "Rinse vegetables in a pan", "Leave the faucet running", 2));
+  questions.add(new Question("A tap dripping one drop of water per second loses how much per day?", "50 liters", "250 liters", "600 liters", "5000 liters", 1));
+  questions.add(new Question("By turning off the water while brushing, per year a family can save: ", "3000 gallons", "2000 gallons", "1000 gallons", "500 gallons", 1));
+  questions.add(new Question("Residential landscape irrigation uses how many gallons each day?", "7 million", "144 million", "109 billion", "9 billion", 4));
+  questions.add(new Question("How much water do people in the U.S. drink every day in total?", "5 million gallons", "600 million gallons", "110 million gallons", "1 billion gallons", 3));
+  
+
+  current = questions.get(0);
+  currentIndex = 0;
+  
+  boxes = new ArrayList();
+  boxes.add(new Box(75, 100, 850, 200, 7));
+  boxes.add(new Box(100, 400, 350, 100, 7));
+  boxes.add(new Box(550, 400, 350, 100, 7));
+  boxes.add(new Box(100, 550, 350, 100, 7));
+  boxes.add(new Box(550, 550, 350, 100, 7));
+  
+  fontSize = 25;
+  myFont = createFont("AlittleSunshine", 36);
+  textFont(myFont);
+  fill(0);
+  
+  water = loadImage("http://www.ccwater.org.uk/wp-content/uploads/2014/09/blue_wave_of_water.jpg", "jpg");
+  
+  clicked = -1;
+  redIndex = -1;
+  greenIndex = -1;
+  
+  pending = true;
+  inPlay = true;
+}
+
+void draw(){
+  image(water, 0, 0, 1000, 750);
+  
+  if (inPlay) {
+	  current = questions.get(currentIndex);
+
+	  for (int i = 0; i < boxes.size(); i++) {
+		if (i == redIndex) {
+		  fill(255, 60, 0);
+		}
+		else if (i == greenIndex) {
+		  fill(50, 205, 50);
+		}
+		else {
+		  fill(240, 255, 240);
+		}
+		rect(boxes.get(i).x, boxes.get(i).y, boxes.get(i).w, boxes.get(i).h, boxes.get(i).c);
+	  }
+	  
+	  fill(0);
+	  
+	  text(current.q, 100 + fontSize / 2, 200 + fontSize / 2);
+	  
+	  text(current.a, 100 + fontSize, 450 + fontSize / 2);
+	  text(current.b, 550 + fontSize, 450 + fontSize / 2);
+	  text(current.c, 100 + fontSize, 600 + fontSize / 2);
+	  text(current.d, 550 + fontSize, 600 + fontSize / 2);
+	  
+	  text("Questions correct: " + score + "/" + (currentIndex + 1) + " (" + ((int)(score / (currentIndex + 1) * 100)) + "%)", 625, 40);
+	  if (!pending) {
+		count++;
+		if (count == 100) {
+			pending = true;
+			greenIndex = -1;
+			redIndex = -1;
+			currentIndex++;
+			count = 0;
+		}
+	  }
+	  if (currentIndex == questions.size()) {
+		inPlay = false;
+	  }
+	}
+	else {
+		text("You got " + score + "/" + (currentIndex) + " (" + ((int)(score / (currentIndex) * 100)) + "%) correct!", 375, 100);
+	}
+}
+
+void mouseClicked() {
+	if (pending) {
+		if (mouseX > 100 && mouseX < 100 + 350 && mouseY > 400 && mouseY < 400 + 100) {
+			clicked = 1;
+		}
+		else if (mouseX > 550 && mouseX < 550 + 350 && mouseY > 400 && mouseY < 400 + 100) {
+			clicked = 2;
+		}
+		else if (mouseX > 100 && mouseX < 100 + 350 && mouseY > 550 && mouseY < 550 + 100) {
+			clicked = 3;
+		}
+		else if (mouseX > 550 && mouseX < 550 + 350 && mouseY > 550 && mouseY < 550 + 100) {
+			clicked = 4;
+		}
+		
+		if (clicked == current.answer) {
+			greenIndex = clicked;
+			score++;
+			clicked = -1;
+			pending = false;
+		}
+		else if (clicked != -1) {
+			redIndex = clicked;
+			greenIndex = current.answer;
+			clicked = -1;
+			pending = false;
+		}
+	}
+}
+
+class Question {
+  String q;
+  String a;
+  String b;
+  String c;
+  String d;
+  int answer;
+  
+  Question(String q1, String a1, String b1, String c1, String d1, int ans) {
+    q = q1;
+	a = a1;
+	b = b1;
+	c = c1;
+	d = d1;
+	answer = ans;
+  }
+}
+
+class Box {
+  int x;
+  int y;
+  int w;
+  int h;
+  int c;
+  
+  Box(int x1, int y1, int w1, int h1, int c1) {
+	x = x1;
+	y = y1;
+	w = w1;
+	h = h1;
+	c = c1;
+  }
+}
+</script>
+<center>
+<canvas id="mycanvas"></canvas>
+</center>
+<center>
+<div class="btn">
+<a href="triviaFinal.html">Play Again?</a>
+</div>
+</center>
+  </body>
+  </html>
